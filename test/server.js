@@ -2,7 +2,7 @@ const express = require("express");
 
 const app = express();
 
-app.use(express.json())
+app.use(express.json());
 
 const users = [
   { id: 1, name: "Jhon", age: 20 },
@@ -10,7 +10,7 @@ const users = [
 ];
 
 app.get("/all-users", (req, res) => {
-  return res.status(200).json({ mesage: "User    fetch succesfully", users });
+  return res.status(200).json({ mesage: "User fetch succesfully", users });
 });
 
 app.post("/add-user", (req, res) => {
@@ -22,6 +22,19 @@ app.post("/add-user", (req, res) => {
 
   users.push(newUser);
   return res.status(201).json({ messsage: "User added successfully", newUser });
+});
+
+app.get("/user/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const user = users.find((userId) => userId.id === id);
+  return res.status(200).json({ message: "User data fetched", user });
+});
+
+app.patch("/update/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const user = users.find((userId) => userId.id === id);
+  user.name = req.body.name;
+  return res.status(201).json({ user });
 });
 
 app.listen(5000, () => {
