@@ -4,7 +4,7 @@ const app = express();
 
 app.use(express.json());
 
-const users = [
+let users = [
   { id: 1, name: "Jhon", age: 20 },
   { id: 2, name: "David", age: 22 },
 ];
@@ -35,6 +35,12 @@ app.patch("/update/:id", (req, res) => {
   const user = users.find((userId) => userId.id === id);
   user.name = req.body.name;
   return res.status(201).json({ user });
+});
+
+app.delete("/delete/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  users = users.filter((userId) => userId.id !== id);
+  return res.status(201).json({ message: "user deleted", users});
 });
 
 app.listen(5000, () => {
