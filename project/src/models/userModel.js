@@ -20,4 +20,4 @@ const userSchema = new mongoose.Schema(
   { timestemps: true },
 );
 
-module.exports = mongoose.modle("User", userSchema);
+module.exports = mongoose.model("User", userSchema);
