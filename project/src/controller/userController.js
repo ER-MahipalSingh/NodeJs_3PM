@@ -1,5 +1,6 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
+const { generateToken } = require("../utils/generateToken");
 
 exports.register = async (req, res) => {
   try {
@@ -40,8 +41,8 @@ exports.login = async (req, res) => {
     if (!isMatch) {
       return res.status(403).json({ message: "Invalid password" });
     }
-
-    return res.status(201).json({ message: "Login successfull", user });
+    const token = generateToken(user.id, res);
+    return res.status(201).json({ message: "Login successfull", user, token });
   } catch (error) {
     console.error("Error: ", error);
     return res.status(500).json({ message: "Login failed" });
