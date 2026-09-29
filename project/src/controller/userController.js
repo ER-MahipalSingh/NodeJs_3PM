@@ -1,6 +1,7 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const { generateToken } = require("../utils/generateToken");
+const otpModel = require("../models/otpModel");
 
 exports.register = async (req, res) => {
   try {
@@ -76,7 +77,7 @@ exports.updateUser = async (req, res) => {
     // }
     const id = req.user.id;
     const updateUSer = await User.findByIdAndUpdate(
-      id ,
+      id,
       { name },
       { new: true, runValidators: true },
     );
@@ -87,5 +88,33 @@ exports.updateUser = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Server error while updating profile" });
+  }
+};
+
+exports.forgotPasswordAndSendOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: "All fileds are required" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const otp = Math.floor(100000 + Math.random() + 999999).toString();
+    await otpModel.findOneAndUpdate(
+      { email },
+      { email, otp, expires: Date.now() + 10 * 24 * 60 },
+      { upsert: true },
+    );
+
+    return res.status(201).json({ message: "OTP send successfully", otp });
+  } catch (error) {
+    console.error("Error: ", error);
+    return res
+      .status(500)
+      .json({ message: "Somthing went wrong while send OTP" });
   }
 };
